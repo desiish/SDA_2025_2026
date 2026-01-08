@@ -1,40 +1,43 @@
-int dx[] = {1,-1,0,0};
-int dy[] = {0,0,1,-1};
 class Solution {
 public:
     int minimumObstacles(vector<vector<int>>& grid) {
         int m = grid.size();
         int n = grid[0].size();
-        vector<vector<int>> dp(m, vector<int>(n,INT_MAX));
-        vector<vector<bool>> vis(m, vector<bool>(n,0));
-        deque<pair<int,int>> q;
-        q.push_front({0,0});
-        dp[0][0] = 0;
-        while(!q.empty()) {
-            pair<int,int> p = q.front();
-            q.pop_front();
-            int cx = p.first;
-            int cy = p.second;
-            if (cx == m-1 && cy == n-1){
-                return dp[m-1][n-1];
-            }
-            for(int i=0;i<4;i++) {
-                int tx = cx + dx[i];
-                int ty = cy + dy[i];
-                if(tx >=0 && tx < m && ty >=0 && ty < n) {
-                    if(!vis[tx][ty]) {
-                        dp[tx][ty] = dp[cx][cy] + (grid[tx][ty] == 1);
-                        if(grid[tx][ty] == 1) {
-                            q.push_back({tx,ty});
-                        } else {
-                            q.push_front({tx,ty});
-                        }
-                        vis[tx][ty] = true;
+
+        vector<vector<int>> distances(m, vector<int>(n, INT_MAX));
+        deque<pair<int, int>> dq;
+
+        distances[0][0] = 0;
+        dq.push_front({0, 0});
+
+        int dx[4] = {1, -1, 0, 0};
+        int dy[4] = {0, 0, 1, -1};
+
+        while (!dq.empty()) {
+            auto [x, y] = dq.front();
+            dq.pop_front();
+
+            for (int d = 0; d < 4; d++) {
+                int nx = x + dx[d];
+                int ny = y + dy[d];
+
+                if (nx < 0 || ny < 0 || nx >= m || ny >= n)
+                    continue;
+
+                int cost = grid[nx][ny];
+
+                if (distances[x][y] + cost < distances[nx][ny]) {
+                    distances[nx][ny] = distances[x][y] + cost;
+
+                    if (cost == 0) {
+                        dq.push_front({nx, ny});
+                    } else {
+                        dq.push_back({nx, ny});
                     }
                 }
             }
         }
 
-        return dp[m-1][n-1];
+        return distances[m - 1][n - 1];
     }
 };
