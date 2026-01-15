@@ -187,7 +187,7 @@ std::vector<Edge> kruskal(int n, std::vector<Edge>& edges) {
 
 Крускал поддържа гора от покриващи дървета с леки промени в имплементацията.
 
-## Задачи за упражнение
+## Задачи 🌻
 
 - [Prim's (MST) : Special Subtree](https://www.hackerrank.com/challenges/primsmstsub/problem)
 - [Kruskal (MST): Really Special Subtree](https://www.hackerrank.com/challenges/kruskalmstrsub/problem)
