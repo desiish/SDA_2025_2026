@@ -84,6 +84,66 @@ std::vector<Edge> prim(int n, int start, std::unordered_map<int, std::vector<Edg
 
 Структурата е удобна за използване в алгоритъм на Крускал. 
 
+```c++
+struct DSU
+{
+    vector<int> parent, size;
+    
+    int n;
+
+    DSU(int n) : n(n)
+    {
+        parent.resize(n + 1);
+        size.resize(n + 1, 1);
+
+        for(int i = 0; i < n + 1; i++)
+        {
+            parent[i] = i;
+        }
+    }
+
+    int find(int node)
+    {
+        if(node == parent[node]) 
+        {
+            return node;
+        }
+
+        return parent[node] = my_find(parent[node]);
+    }
+
+    bool union(int u, int v)
+    {
+        int p_u = find(u);
+        int p_v = find(v);
+
+        if(p_u == p_v)
+        {
+            return false;
+        }
+
+        if(size[p_u] > size[p_v])
+        {
+            parent[p_v] = p_u;
+            size[p_u] += size[p_v];
+        }
+        else
+        {
+            parent[p_u] = p_v;
+            size[p_v] += size[p_u];
+        }
+            
+        n--;
+        
+        return true;
+    }
+    
+    int get_comps() const
+    {
+        return n;
+    }
+
+```
 
 
 [Disjoint-set visualization](https://www.cs.usfca.edu/~galles/visualization/DisjointSets.html)
@@ -104,27 +164,14 @@ struct Edge {
     int weight;
 };
 
-// we use the interface
-class UnionFind {
-public:
-    UnionFind(size_t vertices);
-
-    bool areInOneSet(size_t first, size_t second);
-    void unionVertices(size_t first, size_t second);
-};
-
 std::vector<Edge> kruskal(int n, std::vector<Edge>& edges) {
     std::sort(edges.begin(), edges.end(), [](const Edge& a, const Edge& b) {
         return a.weight < b.weight;
     });
-    UnionFind uf(n);
+    DSU uf(n);
     std::vector<Edge> mstEdges;
     for (size_t i = 0; i < edges.size(); i++) {
-        if (uf.areInOneSet(edges[i].from, edges[i].to)) {
-            continue;
-        }
-
-        uf.unionVertices(edges[i].from, edges[i].to);
+        uf.union(edges[i].from, edges[i].to);
         mstEdges.push_back(edges[i]);
         if (mstEdges.size() == n - 1) {
             break;
@@ -136,7 +183,7 @@ std::vector<Edge> kruskal(int n, std::vector<Edge>& edges) {
 ```
 
 
-![Kruskal's algorithm creating a MST of a graph, step by step example.](media/kruskals_algorithm_example.png)
+![Kruskal's algorithm creating a MST of a graph, step by step example.](https://www.dotnetlovers.com/Images/KruskalsAlgorithmforMinimumSpanningTreeMST110201931155AM.png)
 
 Крускал поддържа гора от покриващи дървета с леки промени в имплементацията.
 
